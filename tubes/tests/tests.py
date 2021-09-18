@@ -17,13 +17,13 @@ PLATE_A_POS = [
     ['X','X','X','X','X','X','X','X',],
     ['X','X','X','X','X','X','X','X',],
     ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','X','X',],
     ['X','X','X','X','X','X','X','P',],
+    # ['X','X','X','X','X','X','X','X',],
+    # ['X','X','X','X','X','X','X','X',],
+    # ['X','X','X','X','X','X','X','X',],
+    # ['X','X','X','X','X','X','X','X',],
+    # ['X','X','X','X','X','X','X','X',],
+    # ['X','X','X','X','X','X','X','P',],
 ]
 PLATE_B_POS = [
     ['X','X','X','X','X','X','X','X',],
@@ -32,15 +32,17 @@ PLATE_B_POS = [
     ['X','X','X','X','X','X','X','X',],
     ['X','X','X','X','X','X','-','-',],
     ['-','-','-','-','-','-','-','-',],
-    ['-','-','-','-','-','-','-','-',],
-    ['-','-','-','-','-','-','-','-',],
-    ['-','-','-','-','-','-','-','-',],
-    ['-','-','-','-','-','-','-','-',],
-    ['-','-','-','-','-','-','-','-',],
-    ['-','-','-','-','-','-','-','-',],
+    # ['-','-','-','-','-','-','-','-',],
+    # ['-','-','-','-','-','-','-','-',],
+    # ['-','-','-','-','-','-','-','-',],
+    # ['-','-','-','-','-','-','-','-',],
+    # ['-','-','-','-','-','-','-','-',],
+    # ['-','-','-','-','-','-','-','-',],
 ]
-ROWS = ['A','D','C','D','E','F','G','H','I','J','K','L']
-
+ROWS = ['A','D','C','D','E','F',]#'G','H','I','J','K','L']
+LEN_ROWS = len(ROWS)
+LEN_COLS = 8
+POOLING_TUBE_POS = 'F8'
 
 def fill_batch(batch):
     for idx_row, row in enumerate(PLATE_A_POS):
@@ -85,7 +87,7 @@ def add_pooling_tube_batch():
 class TubeBatchOneTestCase(TestCase):
     def test_create_type_A_batch(self):
         add_pooling_tube_batch()
-        self.assertEqual(12*8, Tube.objects.count())
+        self.assertEqual(LEN_ROWS*LEN_COLS, Tube.objects.count())
 
     def test_create_type_B_batch(self):
         # create TYPE A batches for the exact amount of positions in one TYPE B batch
@@ -94,7 +96,7 @@ class TubeBatchOneTestCase(TestCase):
                 if '-' != PLATE_B_POS[idx_row][idx_col]:
                     # TYPE A BATCH
                    add_pooling_tube_batch()
-        self.assertEqual(12*8*(8*4+6), Tube.objects.count())
+        self.assertEqual(LEN_ROWS*LEN_COLS*(LEN_COLS*4+6), Tube.objects.count())
         
         # create one type B batch
         run_batch = TubeBatchFactory(xtra_data = {"rack_id":'XXR001'})
@@ -104,12 +106,12 @@ class TubeBatchOneTestCase(TestCase):
         # find all pooling tubes
         pooling_batches = TubeBatch.objects.filter(tags__name__in=[TAG_POOLING_SCAN])
         print('POOLING BATCHES PK: ', list(pooling_batches.values_list('pk', flat=True)))
-        tube_ids = TubeBatchPosition.objects.filter(batch__in=pooling_batches).filter(position='L8').values_list('tube__tube_id', flat=True)
+        tube_ids = TubeBatchPosition.objects.filter(batch__in=pooling_batches).filter(position=POOLING_TUBE_POS).values_list('tube__tube_id', flat=True)
         print('TUBE IDS: ', tube_ids)
-        self.assertEqual(8*4+6, len(tube_ids))
+        self.assertEqual(LEN_COLS*4+6, len(tube_ids))
 
         # fill with all P tubes from type A BATCHes
         fill_batch_B(run_batch, tube_ids)
 
         tube_run_batch = TubeBatch.objects.get(tags__name__in=[TAG_RUN_SCAN])
-        self.assertEqual(8*4+6, tube_run_batch.tubes.count())
+        self.assertEqual(LEN_COLS*4+6, tube_run_batch.tubes.count())
