@@ -3,10 +3,6 @@ from django.test import TestCase
 from tubes.models import Tube, TubeBatch, TubeBatchPosition
 from .factories import TubeFactory, InternalTubeFactory, TubeBatchFactory
 
-# with open('./unolims/tubes/tests/data/A_scan.csv', newline='') as csvfile:
-# ...  reader = csv.DictReader(csvfile)
-# ...  for row in reader:
-# ...   print(row)
 
 # X : Position filled (default)
 # P : Positions of the pooling tube
@@ -115,3 +111,42 @@ class TubeBatchOneTestCase(TestCase):
 
         tube_run_batch = TubeBatch.objects.get(tags__name__in=[TAG_RUN_SCAN])
         self.assertEqual(LEN_COLS*4+6, tube_run_batch.tubes.count())
+
+
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+import csv
+
+
+def fill_batch_with_positions(batch, tube_data_list):
+    for tube_data in tube_data_list:
+        if 'EMPTY' == tube_data['barcode']:
+            continue
+        tube = None
+        position = tube_data['position']
+        if  POOLING_TUBE_POS == position:
+            tube = InternalTubeFactory()
+        else:
+            tube = TubeFactory()
+        TubeBatchPosition.objects.create(tube=tube, batch= batch, position=position)
+
+
+class ReadTubeBatchFileTestCase(TestCase):
+    def test_batch_A(self):
+        parsed_tubes = []
+        rack_id = ''
+        with open(BASE_DIR / 'tests/data/A_scan.csv', newline='') as csvfile:
+            reader = csv.DictReader(csvfile, delimiter=';')
+            for row in reader:
+                print(row)
+                parsed_tubes.append(row)
+                rack_id = row['rack_id'] #assume all rack id's are same
+        
+        self.assertIsNot('', rack_id)
+
+        batch = TubeBatchFactory(xtra_data = {"rack_id":rack_id})
+        batch.tags.add(TAG_POOLING_SCAN)
+        fill_batch_with_positions(batch, parsed_tubes)
+        self.assertEqual(25, Tube.objects.count())
+
+
