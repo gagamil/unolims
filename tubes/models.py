@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models.fields import BLANK_CHOICE_DASH
 from taggit.managers import TaggableManager
 
 
@@ -19,3 +18,6 @@ class TubeBatchPosition(models.Model):
     tube = models.ForeignKey(Tube, on_delete=models.PROTECT)
     batch = models.ForeignKey(TubeBatch, on_delete=models.PROTECT)
     position = models.CharField(max_length=3)
+
+    class Meta:
+        unique_together = ('batch', 'position')
