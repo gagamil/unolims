@@ -2,43 +2,7 @@ from django.test import TestCase
 
 from tubes.models import Tube, TubeBatch, TubeBatchPosition
 from .factories import TubeFactory, InternalTubeFactory, TubeBatchFactory
-
-
-# X : Position filled (default)
-# P : Positions of the pooling tube
-# - : No tube in position
-PLATE_A_POS = [
-    ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','X','P',],
-    # ['X','X','X','X','X','X','X','X',],
-    # ['X','X','X','X','X','X','X','X',],
-    # ['X','X','X','X','X','X','X','X',],
-    # ['X','X','X','X','X','X','X','X',],
-    # ['X','X','X','X','X','X','X','X',],
-    # ['X','X','X','X','X','X','X','P',],
-]
-PLATE_B_POS = [
-    ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','X','X',],
-    ['X','X','X','X','X','X','-','-',],
-    ['-','-','-','-','-','-','-','-',],
-    # ['-','-','-','-','-','-','-','-',],
-    # ['-','-','-','-','-','-','-','-',],
-    # ['-','-','-','-','-','-','-','-',],
-    # ['-','-','-','-','-','-','-','-',],
-    # ['-','-','-','-','-','-','-','-',],
-    # ['-','-','-','-','-','-','-','-',],
-]
-ROWS = ['A','D','C','D','E','F',]#'G','H','I','J','K','L']
-LEN_ROWS = len(ROWS)
-LEN_COLS = 8
-POOLING_TUBE_POS = 'F8'
+from configs import PLATE_A_POS, PLATE_B_POS, ROWS, LEN_ROWS, LEN_COLS, POOLING_TUBE_POS
 
 def fill_batch(batch):
     for idx_row, row in enumerate(PLATE_A_POS):
@@ -49,8 +13,7 @@ def fill_batch(batch):
                 # P tube is internally provided and tube id differs significantly
                 tube = InternalTubeFactory()
             position = '%s%d' % (ROWS[idx_row], idx_col+1)
-            tbp = TubeBatchPosition.objects.create(tube=tube, batch= batch, position=position)
-            # print(tube.tube_id, ' ', position)
+            TubeBatchPosition.objects.create(tube=tube, batch= batch, position=position)
 
 def fill_batch_B(batch, tube_ids):
     # set all possible positions in a rack
