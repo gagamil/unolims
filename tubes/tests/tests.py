@@ -3,6 +3,8 @@ from django.test import TestCase
 from tubes.models import Tube, TubeBatch, TubeBatchPosition
 from .factories import TubeFactory, InternalTubeFactory, TubeBatchFactory
 from configs import PLATE_A_POS, PLATE_B_POS, ROWS, LEN_ROWS, LEN_COLS, POOLING_TUBE_POS
+from tubes.signals import batch_pending_confirmation
+
 
 def fill_batch(batch):
     for idx_row, row in enumerate(PLATE_A_POS):
@@ -111,5 +113,6 @@ class ReadTubeBatchFileTestCase(TestCase):
         batch.tags.add(TAG_POOLING_SCAN)
         fill_batch_with_positions(batch, parsed_tubes)
         self.assertEqual(25, Tube.objects.count())
+        batch_pending_confirmation.send(sender='UNIT TEST', batch_id=batch.pk)
 
 
