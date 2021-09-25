@@ -1,5 +1,6 @@
 import string
 import random
+from dataclasses import dataclass
 
 from django.core.management.base import BaseCommand, CommandError
 from tubes.models import Tube, TubeBatch, TubeBatchPosition
@@ -11,6 +12,12 @@ def random_digits():
     return ''.join(random.choices(string.digits + string.digits, k=6))
 
 
+@dataclass
+class Tube:
+    tube_id: str
+    position: str
+
+
 class Command(BaseCommand):
     help = 'Creates mock Tube batch files - for demo or testing...'
 
@@ -19,7 +26,7 @@ class Command(BaseCommand):
         # TYPE A Batch
         batch_a = TubeBatchFactory(xtra_data={'rack_id':f'RACK{random_digits}'})
         batch_a.tags.add('PoolingScan')
-
+        tubes = []
         # create N (batch_a_tubes_count) tubes
         batch_a_tubes_count = random.randint(3, LEN_ROWS*LEN_COLS-1)
         for idx_row, row in enumerate(PLATE_A_POS):
@@ -29,20 +36,33 @@ class Command(BaseCommand):
                     get_out = True
                     break
 
-                if 'X' == PLATE_A_POS[idx_row][idx_col]:
-                    tube = TubeFactory()
-                else:
-                    # P tube is internally provided and tube id differs significantly
-                    tube = InternalTubeFactory()
                 position = '%s%d' % (ROWS[idx_row], idx_col+1)
-                TubeBatchPosition.objects.create(tube=tube, batch= batch_a, position=position)
+                tube_id = f'INXX{random.randint(100000, 999999)}' if 'P' == PLATE_A_POS[idx_row][idx_col] else f'EXTXX{random.randint(100000, 999999)}'
+                tubes.append(Tube(tube_id=tube_id, position=position))
             if get_out:
                 break
         
-        if not TubeBatchPosition.objects.filter(batch=batch_a, position=POOLING_TUBE_POS).exists():
-            # assume that at POOLING_TUBE_POS there should be an Internal barcoded tube
-            self.stdout.write(self.style.SUCCESS('No pooling tube'))
-            tube = InternalTubeFactory()
-            TubeBatchPosition.objects.create(tube=tube, batch= batch_a, position=POOLING_TUBE_POS)
-        
-        self.stdout.write(self.style.SUCCESS('Count "%d"' % Tube.objects.filter(tubebatch=batch_a).count()))
+        for t in tubes:
+            if t.position == POOLING_TUBE_POS:
+                break
+        else:
+            tubes.append(Tube(tube_id=tube_id, position=POOLING_TUBE_POS))
+
+        rack_id = f'RACK{random_digits()}'
+        from datetime import datetime
+        now = datetime.now()
+        time = now.strftime("%I:%M:%S %p")
+        date =  now.strftime("%m/%d/%Y")
+        time_file = now.strftime("%I:%M:%S_%p")
+        date_file =  now.strftime("%m_%d_%Y")
+        import csv
+        from django.conf import settings
+        with open(settings.MEDIA_ROOT / 'mock' / f'{date_file}_{time_file}.csv', 'w', newline='') as csvfile:
+            fieldnames = ['date', 'time', 'rack_id', 'position', 'barcode']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')
+
+            writer.writeheader()
+            for tube in tubes:
+                writer.writerow({'date':date, 'time':time, 'rack_id':rack_id, 'position': tube.position, 'barcode': tube.tube_id})
+
+        self.stdout.write(self.style.SUCCESS('Count "%d"' % len(tubes)))
