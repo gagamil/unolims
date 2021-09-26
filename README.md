@@ -12,18 +12,19 @@ Built with Django, uses tags and signals for main logic operation.
 
 # App design
 ## Tubes and Batches
-In order to be a bit more universal the term Batch is used. 
-Tubes are grouped into batches for different resons. 
-An example is when they are grouped on a reack for scanning and the data is entered into the system.
+In order to be a bit more universal the word Batch is used. Words Goup or pool might be used as well.
+Tubes are grouped into batches for different reasons. 
+An example is when they are grouped on a rack for scanning and the data is entered into the system.
 Or when the samples are run and tested.
 
 ## Batch
 ### Tags
 To run the logic and display the data to the user Batch may hold any number of tags. 
 These could be: 'INDIVIDUAL POOLS AND POOL TUBE', 'POOLING SCAN', 'TEST RUN 123', 'CONFIRMED', 'COMPLETE', 'CANCELLED'.
+Business logic might interpret tags in one way or another with the subsequent outcome.
 
 ### Extra data
-There might be some extra data that needs to be stored. For this reason the Batch contains a JSON field 'xtra_data'.
+There might be some extra data that needs to be stored and retreived later on. For this reason the Batch contains a JSON field 'xtra_data'.
 
 ## Events and handlers
 Each main model and step triggers a predefined Django signal:
