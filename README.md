@@ -1,13 +1,13 @@
 # unolims
-Base LIMS app for sample testing (two-stage hierarchical pool testing).
+Basic LIMS app for sample testing uing two-stage hierarchical pool testing techinque.
 Built with Django, uses tags and signals for main logic operation.
 
 # Two stage hierarchical pool testing
 1) All samples are placed in their respective tubes.
 2) These samples are then amalgamated into a number of pools.
 3) Pools are being tested.
-4) If pool tested negative, the respective individual samples are flaged negative.
-5) If pool tested positive, the respective individual samples are being tested.
+4) If pool tested negative, the respective individual samples are flagged negative.
+5) If pool tested positive, the respective individual samples are being tested individually.
 
 
 # App design
