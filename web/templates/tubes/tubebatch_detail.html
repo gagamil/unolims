@@ -1,0 +1,32 @@
+{% extends "../base.html" %} {% block BLK_MAIN %}
+<h1>
+  Tube batch
+  <small class="text-muted">{{ object.title }} - {{ object.pk }}</small>
+</h1>
+<h3>{{ object.xtra_data.rack_id }}</h3>
+<div class="row">
+  <div class="col">
+    {% for tag_name in object.tags.names %}
+    <span class="badge bg-secondary">{{ tag_name }}</span>
+    {% endfor %}
+  </div>
+</div>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Barcode</th>
+      <th scope="col">Position</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for tube in object.tubebatchposition_set.all %}
+    <tr>
+      <td>{{ tube.tube.id }}</td>
+      <td>{{ tube.tube.tube_id }}</td>
+      <td>{{ tube.position }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
