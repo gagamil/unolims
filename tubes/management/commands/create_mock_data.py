@@ -17,7 +17,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # 
         # TYPE A Batch
-        batch_a = TubeBatchFactory(xtra_data={'rack_id':f'RACK{random_digits}'})
+        batch_a = TubeBatchFactory(xtra_data={'rack_id':f'RACK_{random_digits()}'})
         batch_a.tags.add('PoolingScan')
 
         # create N (batch_a_tubes_count) tubes
