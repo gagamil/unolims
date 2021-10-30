@@ -20,7 +20,7 @@ class TubeBatchFilter(django_filters.FilterSet):
 
     def tubebatch_filter(self, queryset, name, value):
         return TubeBatch.objects.filter(
-            Q(title__icontains=value) | Q(xtra_data__icontains=value)
+            Q(title__icontains=value) | Q(xtra_data__icontains=value) |Q(tubes__tube_id__icontains=value)
         )
 
 
