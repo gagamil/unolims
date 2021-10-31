@@ -2,6 +2,7 @@ from django.views.generic import ListView, DetailView
 from django.db.models import Q
 import django_filters
 from django_filters.views import FilterView
+from taggit.models import Tag
 
 from tubes.models import Tube, TubeBatch, TubeBatchPosition
 
@@ -29,10 +30,17 @@ class TubeBatchListView(FilterView):
     filterset_class = TubeBatchFilter
     template_name_suffix = '_list'
 
-    # def get_queryset(self):
-    #     qs = self.model.objects.all()
-    #     batch_filtered_list = TubeBatchFilter(self.request.GET, queryset=qs)
-    #     return batch_filtered_list.qs
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        tag = self.request.GET.get('tag')
+        if tag:
+            qs = qs.filter(tags__name__in=[tag])
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tabs'] = Tag.objects.all()
+        return context
 
 
 class TubeBatchDetailView(DetailView):
