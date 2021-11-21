@@ -1,16 +1,30 @@
 {% extends "../base.html" %} {% block BLK_MAIN %}
 <h1>Tubes</h1>
-
+<div class="row justify-content-end">
+  <div class="col-2">
+    <a href="#" type="button" class="btn btn-primary">Import</a>
+  </div>
+</div>
 <div class="row">
   <div class="col">
     <ul class="nav nav-tabs mt-2 mb-4">
       <li class="nav-item">
-        <a class="nav-link {% if not request.GET.tag %}active{% endif %}" aria-current="page" href="{% url 'tubebatch-list-page' %}">All</a>
+        <a
+          class="nav-link {% if not request.GET.tag %}active{% endif %}"
+          aria-current="page"
+          href="{% url 'tubebatch-list-page' %}"
+          >All</a
+        >
       </li>
       {% for tab in tabs%}
-        <li class="nav-item">
-          <a class="nav-link {% if request.GET.tag == tab.name %}active{% endif %}" aria-current="page" href="{% url 'tubebatch-list-page' %}?tag={{ tab.name }}">{{ tab.name }}</a>
-        </li>
+      <li class="nav-item">
+        <a
+          class="nav-link {% if request.GET.tag == tab.name %}active{% endif %}"
+          aria-current="page"
+          href="{% url 'tubebatch-list-page' %}?tag={{ tab.name }}"
+          >{{ tab.name }}</a
+        >
+      </li>
       {% endfor %}
     </ul>
   </div>

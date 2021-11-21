@@ -1,10 +1,12 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
 from django.db.models import Q
+from django.urls import reverse
 import django_filters
 from django_filters.views import FilterView
 from taggit.models import Tag
 
 from tubes.models import Tube, TubeBatch, TubeBatchPosition
+from data_importing.models import FileImportTubeBatch
 
 
 # class TubeBatchFilter(django_filters.FilterSet):
@@ -45,3 +47,12 @@ class TubeBatchListView(FilterView):
 
 class TubeBatchDetailView(DetailView):
     model = TubeBatch
+
+
+class TubeBatchFileImportCreateView(CreateView):
+    model = FileImportTubeBatch
+    fields = ['batch_type', 'import_file']
+    template_name = 'tubes/tubebatch_fileimport.html'
+    
+    def get_success_url(self):
+        return reverse('tubebatch-list-page')
