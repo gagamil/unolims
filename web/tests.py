@@ -13,4 +13,4 @@ class ImportBatchFile(TestCase):
 
         with open(file) as fp:
             response = self.client.post(reverse('tubebatch-fileimport-create-page'), {'batch_type': 'POOLING_BATCH', 'import_file': fp})
-            self.assertEqual(200, response.status_code)
+            self.assertEqual(302, response.status_code)

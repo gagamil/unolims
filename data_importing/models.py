@@ -1,3 +1,4 @@
+import json
 from django.db import models
 
 from .services import BatchImportData, parse_batch_data_from_file, get_tube_batch_from_tube_data
@@ -24,11 +25,13 @@ class FileImportTubeBatch(models.Model):
     batch_data = models.JSONField()
 
     # is_valid = models.BooleanField()
-    def clean(self):
-        # self.batch_data = {'rack_id': 'R000012345'}
-        print('P A T H ===>>> ', self.import_file.path)
-        # self.import_file.open(mode='rt')
+    
+    def clean(self) -> None:
+        '''
+        Copy the data into JSON field
+        '''
+        super().clean()
         tube_data = []
-        with open(self.import_file.path, newline='') as csvfile:
-            tube_data = parse_batch_data_from_file(full_file = csvfile)
-        print('tube_data => ', tube_data)
+        tube_data = parse_batch_data_from_file(full_file = self.import_file.file)
+        self.batch_data = {'tube_data': json.dumps(tube_data)}
+

@@ -2,7 +2,7 @@ import csv
 from datetime import datetime
 from dataclasses import dataclass
 from typing import List
-
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 @dataclass
 class BatchTubeData:
@@ -21,11 +21,15 @@ class BatchImportData:
 
 
 def parse_batch_data_from_file(*, full_file):
-    reader = csv.DictReader(full_file, delimiter=';')
+    if isinstance(full_file, InMemoryUploadedFile):
+        import codecs
+        reader = csv.DictReader(codecs.iterdecode(full_file, 'utf-8'), delimiter=';')
+    else:
+        reader = csv.DictReader(full_file, delimiter=';')
+
     tube_data = []
     for row in reader:
         tube_data.append(row)
-        # print(row['Number'], row['Rack barcode'], row['Tube barcode'], row['Date'], row['Time'], row['Position'])
     return tube_data
 
 def get_tube_batch_from_tube_data(*, tube_data):
