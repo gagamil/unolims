@@ -1,6 +1,6 @@
 # unolims
 
-Basic LIMS app for sample testing using two-stage hierarchical pool testing techinque.
+Basic Laboratory Information Management System web app for sample testing using two-stage hierarchical pool testing techinque.
 Built with Django, uses tags and signals for main logic operation.
 
 # Two stage hierarchical pool testing
