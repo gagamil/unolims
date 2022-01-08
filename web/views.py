@@ -5,6 +5,8 @@ import django_filters
 from django_filters.views import FilterView
 from taggit.models import Tag
 
+from common.signals import sig_send__tube_batch_data_import_done
+from common.data import TubesBatchData
 from tubes.models import Tube, TubeBatch, TubeBatchPosition
 from data_importing.models import FileImportTubeBatch
 
@@ -56,3 +58,12 @@ class TubeBatchFileImportCreateView(CreateView):
     
     def get_success_url(self):
         return reverse('tubebatch-list-page')
+
+    def form_valid(self, form):
+        redirect_url = super().form_valid(form)
+        batch_data = self.object.batch_data
+        import_id = self.object.pk
+
+        batch_data= TubesBatchData.from_json(batch_data['tube_data'])
+        sig_send__tube_batch_data_import_done(sender=TubeBatchFileImportCreateView.__class__.__name__, sender_pk=import_id, tube_batch_data=batch_data)
+        return redirect_url

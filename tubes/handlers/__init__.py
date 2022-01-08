@@ -1,2 +1,3 @@
 from .handle_batch_pending_confirmation import batch_pending_confirmation
 from .handle_batch_just_confirmed import batch_just_confirmed
+from .handle_new_batch_imported import new_batch_imported
