@@ -4,6 +4,9 @@ from taggit.managers import TaggableManager
 
 # Create your models here.
 class Tube(models.Model):
+    '''
+    tube_id - tube barcode
+    '''
     tube_id = models.CharField(max_length=30)
 
 

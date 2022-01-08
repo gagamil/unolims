@@ -1,23 +1,8 @@
 import csv
 from datetime import datetime
-from dataclasses import dataclass
-from typing import List
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-@dataclass
-class BatchTubeData:
-    barcode: str
-    position: str
-    
-@dataclass
-class BatchImportData:
-    '''
-    - batch_id: equals rack ID
-    - timestamp: ISO str
-    '''
-    batch_id: str
-    timestamp: str
-    tubes: List[BatchTubeData]
+from common.data import TubePositionData, TubesBatchData
 
 
 def parse_batch_data_from_file(*, full_file):
@@ -32,11 +17,11 @@ def parse_batch_data_from_file(*, full_file):
         tube_data.append(row)
     return tube_data
 
-def get_tube_batch_from_tube_data(*, tube_data):
+def get_tube_batch_from_tube_data(*, tube_data, batch_type):
     tubes = []
     for idx, tube in enumerate(tube_data):
         print(idx, tube)
-        tubes.append(BatchTubeData(barcode=tube['Tube barcode'], position=tube['Position']))
+        tubes.append(TubePositionData(barcode=tube['Tube barcode'], position=tube['Position']))
 
     batch_id = ''
     date = ''
@@ -49,4 +34,4 @@ def get_tube_batch_from_tube_data(*, tube_data):
     except KeyError as e:
         return None
     date_time = datetime.strptime(f'{date} {time}', "%m/%d/%Y %I:%M:%S %p")
-    return BatchImportData(batch_id=batch_id, timestamp=date_time.isoformat(), tubes=tubes)
+    return TubesBatchData(batch_type=batch_type, batch_id=batch_id, timestamp=date_time.isoformat(), tubes=tubes)

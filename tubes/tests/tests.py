@@ -4,6 +4,7 @@ from tubes.models import Tube, TubeBatch, TubeBatchPosition
 from .factories import TubeFactory, InternalTubeFactory, TubeBatchFactory
 from configs import PLATE_A_POS, PLATE_B_POS, ROWS, LEN_ROWS, LEN_COLS, POOLING_TUBE_POS
 from tubes.signals import batch_pending_confirmation
+from common.const import TAG_POOLING_BATCH, TAG_RUN_BATCH
 
 
 def fill_batch(batch):
@@ -36,12 +37,12 @@ def fill_batch_B(batch, tube_ids):
         TubeBatchPosition.objects.create(tube=tube, batch=batch, position=position)
         # print(tube_id, ' ', position)
 
-TAG_POOLING_SCAN = 'PoolingScan'
+# TAG_POOLING_SCAN = 'PoolingScan'
 TAG_RUN_SCAN = 'RunScan'
 
 def add_pooling_tube_batch():
     batch = TubeBatchFactory(xtra_data = {"rack_id":'XXP001'})
-    batch.tags.add(TAG_POOLING_SCAN)
+    batch.tags.add(TAG_POOLING_BATCH)
     fill_batch(batch)
 
 
@@ -61,11 +62,11 @@ class TubeBatchOneTestCase(TestCase):
         
         # create one type B batch
         run_batch = TubeBatchFactory(xtra_data = {"rack_id":'XXR001'})
-        run_batch.tags.add(TAG_RUN_SCAN)
+        run_batch.tags.add(TAG_RUN_BATCH)
         print('RUN BATCH PK: ', run_batch.pk)
 
         # find all pooling tubes
-        pooling_batches = TubeBatch.objects.filter(tags__name__in=[TAG_POOLING_SCAN])
+        pooling_batches = TubeBatch.objects.filter(tags__name__in=[TAG_POOLING_BATCH])
         print('POOLING BATCHES PK: ', list(pooling_batches.values_list('pk', flat=True)))
         tube_ids = TubeBatchPosition.objects.filter(batch__in=pooling_batches).filter(position=POOLING_TUBE_POS).values_list('tube__tube_id', flat=True)
         print('TUBE IDS: ', tube_ids)
@@ -74,7 +75,7 @@ class TubeBatchOneTestCase(TestCase):
         # fill with all P tubes from type A BATCHes
         fill_batch_B(run_batch, tube_ids)
 
-        tube_run_batch = TubeBatch.objects.get(tags__name__in=[TAG_RUN_SCAN])
+        tube_run_batch = TubeBatch.objects.get(tags__name__in=[TAG_RUN_BATCH])
         self.assertEqual(LEN_COLS*4+6, tube_run_batch.tubes.count())
 
 
@@ -110,7 +111,7 @@ class ReadTubeBatchFileTestCase(TestCase):
         self.assertIsNot('', rack_id)
 
         batch = TubeBatchFactory(xtra_data = {"rack_id":rack_id})
-        batch.tags.add(TAG_POOLING_SCAN)
+        batch.tags.add(TAG_POOLING_BATCH)
         fill_batch_with_positions(batch, parsed_tubes)
         self.assertEqual(25, Tube.objects.count())
         batch_pending_confirmation.send(sender='UNIT TEST', batch_id=batch.pk)

@@ -1,8 +1,8 @@
 import json
 from django.db import models
 
-from .services import BatchImportData, parse_batch_data_from_file, get_tube_batch_from_tube_data
-
+from .services import parse_batch_data_from_file, get_tube_batch_from_tube_data
+from common.const import TAG_POOLING_BATCH, TAG_RUN_BATCH, POOLING_BATCH, RUN_BATCH
 
 class FileImportTubeBatch(models.Model):
     '''
@@ -12,11 +12,9 @@ class FileImportTubeBatch(models.Model):
     # - is_valid set programmatically
 
     '''
-    POOLING_BATCH = 'POOLING_BATCH'
-    RUN_BATCH = 'RUN_BATCH'
     BATCH_TYPE_CHOICES = [
-        (POOLING_BATCH, 'Pooling batch'),
-        (RUN_BATCH, 'Run batch')
+        (POOLING_BATCH, TAG_POOLING_BATCH),
+        (RUN_BATCH, TAG_RUN_BATCH)
     ]
     batch_type = models.CharField(choices=BATCH_TYPE_CHOICES,
         default=POOLING_BATCH, max_length=32)
@@ -33,5 +31,6 @@ class FileImportTubeBatch(models.Model):
         super().clean()
         tube_data = []
         tube_data = parse_batch_data_from_file(full_file = self.import_file.file)
-        self.batch_data = {'tube_data': json.dumps(tube_data)}
+        tube_batch = get_tube_batch_from_tube_data(tube_data=tube_data, batch_type=self.batch_type)
+        self.batch_data = {'tube_data': tube_batch.to_json()}
 
