@@ -1,8 +1,11 @@
+import logging
 import csv
 from datetime import datetime
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from common.data import TubePositionData, TubesBatchData
+
+logger = logging.getLogger(__name__)
 
 
 def parse_batch_data_from_file(*, full_file):
@@ -20,7 +23,6 @@ def parse_batch_data_from_file(*, full_file):
 def get_tube_batch_from_tube_data(*, tube_data, batch_type):
     tubes = []
     for idx, tube in enumerate(tube_data):
-        print(idx, tube)
         tubes.append(TubePositionData(barcode=tube['Tube barcode'], position=tube['Position']))
 
     batch_id = ''
@@ -32,6 +34,7 @@ def get_tube_batch_from_tube_data(*, tube_data, batch_type):
             date = tube_data[0]['Date']
             time = tube_data[0]['Time']
     except KeyError as e:
+        logger.error(f'Tube data is missing some keys. Cannot create TubesBatchData object.', e)
         return None
     date_time = datetime.strptime(f'{date} {time}', "%m/%d/%Y %I:%M:%S %p")
     title_date = datetime.strptime(f'{date}', "%m/%d/%Y").strftime('%A %d')
