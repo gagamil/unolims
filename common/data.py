@@ -19,3 +19,4 @@ class TubesBatchData:
     batch_id: str
     timestamp: str
     tubes: List[TubePositionData]
+    title: str = ''

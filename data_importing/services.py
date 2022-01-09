@@ -34,4 +34,5 @@ def get_tube_batch_from_tube_data(*, tube_data, batch_type):
     except KeyError as e:
         return None
     date_time = datetime.strptime(f'{date} {time}', "%m/%d/%Y %I:%M:%S %p")
-    return TubesBatchData(batch_type=batch_type, batch_id=batch_id, timestamp=date_time.isoformat(), tubes=tubes)
+    title_date = datetime.strptime(f'{date}', "%m/%d/%Y").strftime('%A %d')
+    return TubesBatchData(batch_type=batch_type, batch_id=batch_id, timestamp=date_time.isoformat(), tubes=tubes, title=f'{title_date} batch')

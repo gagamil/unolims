@@ -12,7 +12,7 @@ def new_batch_imported(sender, **kwargs):
     # DO ATOMIC
     xtra_data = {}
     xtra_data['rack_id'] = tube_batch_data.batch_id
-    batch = TubeBatch.objects.create(tags=tube_batch_data.batch_type, xtra_data=xtra_data)
+    batch = TubeBatch.objects.create(tags=tube_batch_data.batch_type, xtra_data=xtra_data, title=tube_batch_data.title)
     for t in tube_batch_data.tubes:
         tube = Tube.objects.create(tube_id=t.barcode)
         TubeBatchPosition.objects.create(tube=tube, batch=batch, position=t.position)
