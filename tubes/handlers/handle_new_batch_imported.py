@@ -12,6 +12,7 @@ def new_batch_imported(sender, **kwargs):
     # DO ATOMIC
     xtra_data = {}
     xtra_data['rack_id'] = tube_batch_data.batch_id
+    xtra_data['created_at'] = tube_batch_data.timestamp
     batch = TubeBatch.objects.create(tags=tube_batch_data.batch_type, xtra_data=xtra_data, title=tube_batch_data.title)
     for t in tube_batch_data.tubes:
         tube = Tube.objects.create(tube_id=t.barcode)

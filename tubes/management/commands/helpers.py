@@ -1,5 +1,6 @@
 import string
 import random
+import datetime
 
 from tubes.models import Tube, TubeBatch, TubeBatchPosition
 from configs import PLATE_A_POS, PLATE_B_POS, ROWS, LEN_ROWS, LEN_COLS, POOLING_TUBE_POS
@@ -12,7 +13,9 @@ def random_digits():
 
 def create_type_b_batch(tubes):
     print('Tubes: ', tubes)
-    batch = TubeBatchFactory(xtra_data={'rack_id':f'RACK_{random_digits()}'})
+    title_date = datetime.date.today().strftime('%A %d')
+    timestamp = datetime.datetime.now()
+    batch = TubeBatchFactory(xtra_data={'rack_id':f'RACK_{random_digits()}','created_at': timestamp.isoformat()}, title=f'{title_date} batch')
     batch.tags.add('RunScan')
 
     count = 1
@@ -28,7 +31,9 @@ def create_type_b_batch(tubes):
 
 
 def create_type_a_batch():
-    batch_a = TubeBatchFactory(xtra_data={'rack_id':f'RACK_{random_digits()}'})
+    title_date = datetime.date.today().strftime('%A %d')
+    timestamp = datetime.datetime.now()
+    batch_a = TubeBatchFactory(xtra_data={'rack_id':f'RACK_{random_digits()}', 'created_at': timestamp.isoformat()}, title=f'{title_date} batch')
     batch_a.tags.add('PoolingScan')
 
     # create N (batch_a_tubes_count) tubes
