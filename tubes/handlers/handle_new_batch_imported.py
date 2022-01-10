@@ -1,5 +1,6 @@
 import logging
 from django.dispatch import receiver
+from actstream import action
 
 from common.signals import tube_batch_import_done
 from common.data import TubePositionData, TubesBatchData
@@ -20,3 +21,4 @@ def new_batch_imported(sender, **kwargs):
     for t in tube_batch_data.tubes:
         tube = Tube.objects.create(tube_id=t.barcode)
         TubeBatchPosition.objects.create(tube=tube, batch=batch, position=t.position)
+    action.send(batch, verb='was just created')

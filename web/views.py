@@ -4,6 +4,7 @@ from django.urls import reverse
 import django_filters
 from django_filters.views import FilterView
 from taggit.models import Tag
+from actstream import action
 
 from common.signals import sig_send__tube_batch_data_import_done
 from common.data import TubesBatchData
@@ -66,4 +67,5 @@ class TubeBatchFileImportCreateView(CreateView):
 
         batch_data= TubesBatchData.from_json(batch_data['tube_data'])
         sig_send__tube_batch_data_import_done(sender=TubeBatchFileImportCreateView.__class__.__name__, sender_pk=import_id, tube_batch_data=batch_data)
+        action.send(self.object, verb=f'finished import of new batch of tubes with rack id: {batch_data.batch_id}')
         return redirect_url
