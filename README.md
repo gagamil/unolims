@@ -3,6 +3,15 @@
 Basic Laboratory Information Management System web app for sample testing using two-stage hierarchical pool testing techinque.
 Built with Django, uses tags and signals for main logic operation.
 
+# licence
+
+MIT
+
+# motivation
+
+LIMS might be expensive to build. Since there is information out that not so rich regions and countries struggle to test their population due to finance reasons easing some part of the process might be beneficial to them.
+Provided that this software would be relatively easy to deploy and modify this LIMS would be a good tool for the labs.
+
 # Two stage hierarchical pool testing
 
 1. All samples are placed in their respective tubes.
