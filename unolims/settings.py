@@ -152,3 +152,6 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
+
+
+LOGIN_REDIRECT_URL = '/'

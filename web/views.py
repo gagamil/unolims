@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView
 from django.db.models import Q
 from django.urls import reverse
@@ -29,7 +30,7 @@ class TubeBatchFilter(django_filters.FilterSet):
         )
 
 
-class TubeBatchListView(FilterView):
+class TubeBatchListView(LoginRequiredMixin, FilterView):
     model = TubeBatch
     filterset_class = TubeBatchFilter
     template_name_suffix = '_list'
@@ -47,11 +48,11 @@ class TubeBatchListView(FilterView):
         return context
 
 
-class TubeBatchDetailView(DetailView):
+class TubeBatchDetailView(LoginRequiredMixin, DetailView):
     model = TubeBatch
 
 
-class TubeBatchFileImportCreateView(CreateView):
+class TubeBatchFileImportCreateView(LoginRequiredMixin, CreateView):
     model = FileImportTubeBatch
     fields = ['batch_type', 'import_file']
     template_name = 'tubes/tubebatch_fileimport.html'

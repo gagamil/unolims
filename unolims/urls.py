@@ -23,6 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # WEB SSR
-    path('', TemplateView.as_view(template_name="main.html")),
-    path('tubes/', include('web.urls')),
+    path('home/', TemplateView.as_view(template_name="main.html")),
+    path('', include('web.urls')),
 ]
