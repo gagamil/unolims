@@ -2,6 +2,7 @@ import string
 import random
 import datetime
 
+from common.const import TAG_POOLING_BATCH, TAG_RUN_BATCH
 from tubes.models import Tube, TubeBatch, TubeBatchPosition
 from configs import PLATE_A_POS, PLATE_B_POS, ROWS, LEN_ROWS, LEN_COLS, POOLING_TUBE_POS
 from tubes.tests.factories import TubeFactory, InternalTubeFactory, TubeBatchFactory
@@ -16,7 +17,7 @@ def create_type_b_batch(tubes):
     title_date = datetime.date.today().strftime('%A %d')
     timestamp = datetime.datetime.now()
     batch = TubeBatchFactory(xtra_data={'rack_id':f'RACK_{random_digits()}','created_at': timestamp.isoformat()}, title=f'{title_date} batch')
-    batch.tags.add('RunScan')
+    batch.tags.add(TAG_RUN_BATCH)
 
     count = 1
     for idx_row, row in enumerate(PLATE_B_POS):
@@ -34,7 +35,7 @@ def create_type_a_batch():
     title_date = datetime.date.today().strftime('%A %d')
     timestamp = datetime.datetime.now()
     batch_a = TubeBatchFactory(xtra_data={'rack_id':f'RACK_{random_digits()}', 'created_at': timestamp.isoformat()}, title=f'{title_date} batch')
-    batch_a.tags.add('PoolingScan')
+    batch_a.tags.add(TAG_POOLING_BATCH)
 
     # create N (batch_a_tubes_count) tubes
     batch_a_tubes_count = random.randint(3, LEN_ROWS*LEN_COLS-1)
