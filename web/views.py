@@ -34,6 +34,7 @@ class TubeBatchListView(LoginRequiredMixin, FilterView):
     model = TubeBatch
     filterset_class = TubeBatchFilter
     template_name_suffix = '_list'
+    paginate_by = 25
 
     def get_queryset(self):
         qs = self.model.objects.all()
