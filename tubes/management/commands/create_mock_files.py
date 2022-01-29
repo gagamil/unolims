@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand, CommandError
 from tubes.models import Tube, TubeBatch, TubeBatchPosition
 from configs import PLATE_A_POS, PLATE_B_POS, ROWS, LEN_ROWS, LEN_COLS, POOLING_TUBE_POS
 from tubes.tests.factories import TubeFactory, InternalTubeFactory, TubeBatchFactory
-
+from data_importing.const import FILE_HEADERS
 
 def random_digits():
     return ''.join(random.choices(string.digits + string.digits, k=6))
@@ -58,11 +58,10 @@ class Command(BaseCommand):
         import csv
         from django.conf import settings
         with open(settings.MEDIA_ROOT / 'mock' / f'{date_file}_{time_file}.csv', 'w', newline='') as csvfile:
-            fieldnames = ['date', 'time', 'rack_id', 'position', 'barcode']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')
+            writer = csv.DictWriter(csvfile, fieldnames=FILE_HEADERS, delimiter=';')
 
             writer.writeheader()
             for tube in tubes:
-                writer.writerow({'date':date, 'time':time, 'rack_id':rack_id, 'position': tube.position, 'barcode': tube.tube_id})
+                writer.writerow({'Date':date, 'Time':time, 'Rack barcode':rack_id, 'Position': tube.position, 'Tube barcode': tube.tube_id})
 
         self.stdout.write(self.style.SUCCESS('Count "%d"' % len(tubes)))
