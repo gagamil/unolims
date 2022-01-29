@@ -1,9 +1,17 @@
-{% extends "../base.html" %} {% block BLK_MAIN %}
+{% extends "../base.html" %} 
+{% load static %}
+
+{% block BLK_MAIN %}
+{% csrf_token %}
+<script>
+const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+</script>
+{{ js_data|json_script:'object_data' }}
 <h1>
   Tube batch
-  <small class="text-muted">{{ object.title }} - {{ object.pk }}</small>
 </h1>
 <h3>{{ object.xtra_data.rack_id }}</h3>
+<div id="tubes__title_update"></div>
 <div class="row">
   <div class="col">
     {% for tag_name in object.tags.names %}
@@ -30,3 +38,4 @@
   </tbody>
 </table>
 {% endblock %}
+{% block JS_INCLUDE %}<script src="{% static 'js/index-bundle.js' %}"></script>{% endblock %}
