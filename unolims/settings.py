@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'taggit',
 
     'data_importing',
+    'run',
     'tubes',
     'web'
 ]
