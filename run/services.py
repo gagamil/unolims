@@ -23,7 +23,7 @@ def get_wells(*, row_start, col_start, pattern_mask):
     return wells
 
 
-def get_wells_with_pattern_mask(*, pattern_mask, well_count):
+def get_wells_with_pattern_mask(*, pattern_mask, well_count, row_max_idx):
     curr_row_offset = 0
     row_offset_step = len(pattern_mask)
     curr_col_offset = 0
@@ -33,7 +33,7 @@ def get_wells_with_pattern_mask(*, pattern_mask, well_count):
     for idx in range(well_count):
         wells.append(get_wells(row_start=curr_row_offset, col_start=curr_col_offset, pattern_mask=pattern_mask))
         #   calculate next position
-        if curr_row_offset + row_offset_step +1 > len(ALPHABET):
+        if curr_row_offset + row_offset_step +1 > row_max_idx or curr_row_offset + row_offset_step +1 > len(ALPHABET):
             curr_row_offset = 0
             curr_col_offset += col_offset_step
         else:
@@ -58,14 +58,17 @@ def create_well_plate_template(*, barcodes, replication, targets, well_plate=RUN
         config = next(item for item in RUN_WELLPLATE__CONFIGS if item["name"] == RUN_WELLPLATE__384)
         layout = config['layout']
         well_count = layout['well_count']
+        rows = layout['rows']
+        row_max_idx = ALPHABET.index(rows[1])
+
         if replication == RUN_REPLICATION__DUPLICATE:
             if well_count < len(barcodes)*2:
                 return None
-            wells = get_wells_with_pattern_mask(pattern_mask=RUN_REPLICATION__DUPLICATE__PATTERN, well_count=len(barcodes))
+            wells = get_wells_with_pattern_mask(pattern_mask=RUN_REPLICATION__DUPLICATE__PATTERN, well_count=len(barcodes), row_max_idx=row_max_idx)
         elif replication == RUN_REPLICATION__TRIPLICATE:
             if well_count < len(barcodes)*3:
                 return None
-            wells = get_wells_with_pattern_mask(pattern_mask=RUN_REPLICATION__TRIPLICATE__PATTERN, well_count=len(barcodes))
+            wells = get_wells_with_pattern_mask(pattern_mask=RUN_REPLICATION__TRIPLICATE__PATTERN, well_count=len(barcodes), row_max_idx=row_max_idx)
 
     final_wells = []
     for idx, well_group in enumerate(wells):
