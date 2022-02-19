@@ -33,10 +33,10 @@ RUN_REPLICATION__TRIPLICATE__PATTERN = [
 ALPHABET = list(string.ascii_uppercase)
 # https://www.thermofisher.com/ru/ru/home/brands/thermo-scientific/molecular-biology/thermo-scientific-pcr/thermo-scientific-plastics-consumables/qpcr-white-plates.html
 RUN_WELLPLATE__384 = 'RUN_WELLPLATE__384'
-RUN_WELLPLATE__384_LAYOUT = {'rows':'A-P', 'cols':'1-24', 'well_count':384}
+RUN_WELLPLATE__384_LAYOUT = {'rows':['A','P'], 'cols':'1-24', 'well_count':384}
 
 RUN_WELLPLATE__96 = 'RUN_WELLPLATE__384'
-RUN_WELLPLATE__96_LAYOUT = {'rows':'A-H', 'cols':'1-12', 'well_count':96}
+RUN_WELLPLATE__96_LAYOUT = {'rows':['A','H'], 'cols':'1-12', 'well_count':96}
 
 RUN_WELLPLATE__CONFIGS = [
                             {'name':RUN_WELLPLATE__384, 'layout':RUN_WELLPLATE__384_LAYOUT}, 
