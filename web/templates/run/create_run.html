@@ -1,0 +1,12 @@
+{% extends "../base.html" %} 
+{% load static %}
+{% load crispy_forms_tags %}
+{% block BLK_MAIN %} 
+<h1>Add run</h1>
+<div id="run__create"></div>
+{% endblock %}
+{% block JS_INCLUDE %}
+<script src="{% static 'django_eventstream/eventsource.min.js' %}"></script>
+<script src="{% static 'django_eventstream/reconnecting-eventsource.js' %}"></script>
+<script src="{% static 'js/index-bundle.js' %}"></script>
+{% endblock %}

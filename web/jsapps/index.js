@@ -13,6 +13,7 @@ import { useToggle } from "react-use";
 import useFetch from "use-http";
 
 import BatchTitleForm from "./BatchTitleForm";
+import RunCreate from "./RunCreate";
 
 const TubeBatchInlineUpdate = () => {
   const options = {
@@ -72,7 +73,17 @@ const TubeBatchInlineUpdate = () => {
   );
 };
 
-ReactDOM.render(
-  <TubeBatchInlineUpdate />,
-  document.getElementById("tubes__title_update")
-);
+try {
+  ReactDOM.render(
+    <TubeBatchInlineUpdate />,
+    document.getElementById("tubes__title_update")
+  );
+} catch (e) {
+  console.log("Oooops");
+}
+
+try {
+  ReactDOM.render(<RunCreate />, document.getElementById("run__create"));
+} catch (e) {
+  console.log("Oooops 2");
+}

@@ -1,5 +1,6 @@
+from pipes import Template
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, TemplateView
 from django.db.models import Q
 from django.urls import reverse
 import django_filters
@@ -10,6 +11,7 @@ from common.signals import sig_send__tube_batch_data_import_done
 from common.data import TubesBatchData
 from tubes.models import Tube, TubeBatch, TubeBatchPosition
 from data_importing.models import FileImportTubeBatch
+from run.models import Run
 
 
 # class TubeBatchFilter(django_filters.FilterSet):
@@ -76,3 +78,7 @@ class TubeBatchFileImportCreateView(LoginRequiredMixin, CreateView):
         batch_data= TubesBatchData.from_json(batch_data['tube_data'])
         sig_send__tube_batch_data_import_done(sender=TubeBatchFileImportCreateView.__class__.__name__, sender_pk=import_id, tube_batch_data=batch_data)
         return redirect_url
+
+
+class CreateRunView(LoginRequiredMixin, TemplateView):
+    template_name = 'run/create_run.html'
