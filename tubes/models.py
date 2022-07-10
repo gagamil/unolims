@@ -9,6 +9,9 @@ class Tube(models.Model):
     '''
     tube_id = models.CharField(max_length=30)
 
+    def __str__(self) -> str:
+        return f'{self.tube_id}'
+
 
 class TubeBatch(models.Model):
     tubes = models.ManyToManyField(Tube, through='TubeBatchPosition')
@@ -24,3 +27,6 @@ class TubeBatchPosition(models.Model):
 
     class Meta:
         unique_together = ('batch', 'position')
+
+    def __str__(self) -> str:
+        return f'{self.tube} {self.position}'
