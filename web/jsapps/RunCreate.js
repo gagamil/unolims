@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 
 const RunCreate = () => {
   // useEffect(() => {
@@ -29,6 +30,12 @@ const RunCreate = () => {
     3: undefined,
     4: undefined,
   });
+
+  const updateTubeBatchData = ({ id, title, date, rackId }) => {
+    const oldData = { ...chosenScansData };
+    oldData[runTubeBatchIdx] = { id, title, date, rackId };
+    setChosenScansData({ ...oldData });
+  };
 
   return (
     <>
@@ -72,13 +79,12 @@ const RunCreate = () => {
         <div className="col">
           <div className="mt-4">
             <label htmlFor="run_title_id" className="form-label h5">
-              Chosen run tube batces
+              Chosen run tube bathces
             </label>
           </div>
           <RunScanChoices setRunTubeBatchIdx={setRunTubeBatchIdx} />
           <ChosenScanInfo
-            chosenScansData={chosenScansData}
-            runTubeBatchIdx={runTubeBatchIdx}
+            chosenScansData={chosenScansData[runTubeBatchIdx]}
             setSelectModeEnabled={setSelectModeEnabled}
           />
         </div>
@@ -92,7 +98,7 @@ const RunCreate = () => {
               </label>
             </div>
             <div className="overflow-scroll mt-2" style={{ maxHeight: 300 }}>
-              <ScanTable />
+              <ScanTable handleItemAdd={updateTubeBatchData} />
             </div>
           </div>
         </div>
@@ -103,116 +109,99 @@ const RunCreate = () => {
 
 export default RunCreate;
 
-const ChosenScanInfo = ({
-  chosenScansData,
-  runTubeBatchIdx,
-  setSelectModeEnabled,
-}) => {
-  const value = chosenScansData[runTubeBatchIdx];
+const ChosenScanInfo = ({ chosenScansData, setSelectModeEnabled }) => {
+  const {
+    title = "---",
+    date = "---",
+    rackId = "---",
+  } = chosenScansData
+    ? chosenScansData
+    : { title: "---", date: "---", rackId: "---" };
   return (
     <>
-      {!!value && (
-        <div className="card mt-2" style="width: 18rem;">
-          <div className="card-body">
-            <h5 className="card-title">{value["batchName"]}</h5>
-            <p className="card-text">
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
-            </p>
-            <a href="#" className="btn btn-primary">
-              Change
-            </a>
-          </div>
-        </div>
-      )}
-      {!value && (
-        <div className="card-body">
-          <h5 className="card-title">---</h5>
-          <p className="card-text">---</p>
-          <button
-            onClick={() => {
-              setSelectModeEnabled(true);
-            }}
-            className="btn btn-primary"
-          >
-            Add
-          </button>
-        </div>
-      )}
+      <div className="card-body">
+        <h5 className="card-title">{title}</h5>
+        <p className="card-text">
+          {date} {rackId}
+        </p>
+        <button
+          onClick={() => {
+            setSelectModeEnabled(true);
+          }}
+          className="btn btn-primary"
+        >
+          Add
+        </button>
+      </div>
     </>
   );
 };
 
-const ScanTable = () => {
+const BATCH_TYPE__RUN = "RUN_BATCH";
+const ScanTable = ({ handleItemAdd }) => {
+  const [tubeBatches, setTubeBatches] = useState([]);
+  useEffect(() => {
+    console.log("Getting tube batches to be used in scans");
+    fetch(
+      "/v1/tubebatch/?" +
+        new URLSearchParams({
+          batchType: BATCH_TYPE__RUN,
+        })
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .then((jsonData) => {
+        setTubeBatches(jsonData);
+        console.log("tubeBatches: ", jsonData);
+      })
+      .catch((e) => {
+        console.log("Error: ", e);
+      });
+  }, []);
+
+  const batchList = tubeBatches.map((tb) => {
+    return (
+      <tr key={tb.id}>
+        <th scope="row">
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            onClick={() => {
+              handleItemAdd({
+                id: tb.id,
+                title: tb.title,
+                date: tb.xtra_data.created_at,
+                rackId: tb.xtra_data.rack_id,
+              });
+            }}
+          >
+            Add
+          </button>
+        </th>
+        <td>{tb.title}</td>
+        <td>{tb.xtra_data.created_at}</td>
+        <td>{tb.xtra_data.rack_id}</td>
+      </tr>
+    );
+  });
   return (
     <table className="table pt-4">
       <thead>
         <tr>
-          <th scope="col">#</th>
-          <th scope="col">First</th>
-          <th scope="col">Last</th>
-          <th scope="col">Handle</th>
+          <th scope="col">Action</th>
+          <th scope="col">Title</th>
+          <th scope="col">Created</th>
+          <th scope="col">Rack Id</th>
         </tr>
       </thead>
-      <tbody className="table-group-divider">
-        <tr>
-          <th scope="row">
-            <button type="button" class="btn btn-primary btn-sm">
-              Add
-            </button>
-          </th>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td colspan="2">Larry the Bird</td>
-          <td>@twitter</td>
-        </tr>
-        <tr>
-          <th scope="row">1</th>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td colspan="2">Larry the Bird</td>
-          <td>@twitter</td>
-        </tr>
-        <tr>
-          <th scope="row">1</th>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td colspan="2">Larry the Bird</td>
-          <td>@twitter</td>
-        </tr>
-      </tbody>
+      <tbody className="table-group-divider">{batchList}</tbody>
     </table>
   );
+};
+
+ScanTable.propTypes = {
+  selectItem: PropTypes.func,
 };
 
 const REPLICATION__DUPLICATE = "DUPLICATE";
