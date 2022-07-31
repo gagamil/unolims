@@ -6,6 +6,8 @@ import {
   REPLICATION__TRIPLICATE,
   RUN_METHOD__EUROFINS,
   RUN_METHOD__SALIVACLEAR,
+  REPLICATION_DISPLAY_MAPPING,
+  RUN_METHOD_DISPLAY_MAPPING,
 } from "./const";
 
 const RunCreatePreview = ({
@@ -14,21 +16,17 @@ const RunCreatePreview = ({
   runReplication,
   tubeBatchDataList,
 }) => {
-  
-    const [tubeBatchTitles,setTubeBatchTitles] = useState([])
-    useEffect(()=>{
-        const lTubeBatchTitles = []
-        for (k, v of Object.entries(tubeBatchDataList)){
-            lTubeBatchTitles.push(v.title)
-            setTubeBatchTitles(lTubeBatchTitles)
-        }
+  const [tubeBatchTitles, setTubeBatchTitles] = useState([]);
+  useEffect(() => {
+    const lTubeBatchTitles = [];
+    for (const [k, v] of Object.entries(tubeBatchDataList)) {
+      if (!!v) {
+        lTubeBatchTitles.push(v.title);
+        setTubeBatchTitles(lTubeBatchTitles);
+      }
+    }
+  }, [runTitle, runMethod, runReplication, tubeBatchDataList]);
 
-    }, [runTitle,
-        runMethod,
-        runReplication,
-        tubeBatchDataList])
-
-    
   return (
     <>
       <div className="row">
@@ -38,11 +36,11 @@ const RunCreatePreview = ({
             <dt>Run title</dt>
             <dd>{runTitle}</dd>
             <dt>Run method</dt>
-            <dd>{runMethod}</dd>
+            <dd>{RUN_METHOD_DISPLAY_MAPPING[runMethod]}</dd>
             <dt>Run replication</dt>
-            <dd>{runReplication}</dd>
+            <dd>{REPLICATION_DISPLAY_MAPPING[runReplication]}</dd>
             <dt>Tube batches</dt>
-            <dd>{tubeBatchTitles.map((el) => el)}</dd>
+            <dd>{tubeBatchTitles.map((el) => el + " ")}</dd>
           </dl>
         </div>
       </div>
@@ -58,7 +56,7 @@ RunCreatePreview.propTypes = {
     REPLICATION__DUPLICATE,
     REPLICATION__TRIPLICATE,
   ]).isRequired,
-  tubeBatchDataList: PropTypes.array.isRequired,
+  tubeBatchDataList: PropTypes.object.isRequired,
 };
 
 export default RunCreatePreview;

@@ -6,6 +6,10 @@ import {
   REPLICATION__TRIPLICATE,
   RUN_METHOD__EUROFINS,
   RUN_METHOD__SALIVACLEAR,
+  ACTIVE__REPLICATION__CHOICES,
+  ACTIVE__RUN_METHOD__CHOICES,
+  REPLICATION_DISPLAY_MAPPING,
+  RUN_METHOD_DISPLAY_MAPPING,
 } from "./const";
 
 const RunCreateForm = ({ setRunData }) => {
@@ -73,10 +77,7 @@ const RunCreateForm = ({ setRunData }) => {
               Method
             </label>
           </div>
-          <RunMethodChoice
-            currentChoice={runMethod}
-            setRunMethod={setRunMethod}
-          />
+          <RunMethodChoice currentChoice={runMethod} setChoice={setRunMethod} />
         </div>
 
         <div className="col-md-5">
@@ -183,7 +184,6 @@ const BATCH_TYPE__RUN = "RUN_BATCH";
 const ScanTable = ({ handleItemAdd }) => {
   const [tubeBatches, setTubeBatches] = useState([]);
   useEffect(() => {
-    console.log("Getting tube batches to be used in scans");
     fetch(
       "/v1/tubebatch/?" +
         new URLSearchParams({
@@ -249,41 +249,16 @@ ScanTable.propTypes = {
 const ReplicationChoice = ({ currentChoice, setChoice }) => {
   return (
     <div className="btn-group" role="group" aria-label="Replication choices">
-      <input
-        // html attributes
-        type="radio"
-        className="btn-check"
-        name="replication"
-        id={`id_${REPLICATION__DUPLICATE}`}
-        autocomplete="off"
-        // react attributes
-        checked={currentChoice === REPLICATION__DUPLICATE}
-        onClick={() => setChoice(REPLICATION__DUPLICATE)}
-      />
-      <label
-        className="btn btn-outline-primary"
-        for={`id_${REPLICATION__DUPLICATE}`}
-      >
-        Duplicate
-      </label>
-
-      <input
-        // html attributes
-        type="radio"
-        className="btn-check"
-        name="replication"
-        id={`id_${REPLICATION__TRIPLICATE}`}
-        autocomplete="off"
-        // react attributes
-        checked={currentChoice === REPLICATION__TRIPLICATE}
-        onClick={() => setChoice(REPLICATION__TRIPLICATE)}
-      />
-      <label
-        className="btn btn-outline-primary"
-        for={`id_${REPLICATION__TRIPLICATE}`}
-      >
-        Triplicate
-      </label>
+      {ACTIVE__REPLICATION__CHOICES.map((choice) => (
+        <RadioButton
+          key={choice}
+          name="replication"
+          value={choice}
+          displayValue={REPLICATION_DISPLAY_MAPPING[choice]}
+          checked={currentChoice === choice}
+          handleChange={setChoice}
+        />
+      ))}
     </div>
   );
 };
@@ -339,42 +314,41 @@ const RunScanChoices = ({ setRunTubeBatchIdx }) => {
   );
 };
 
-const RunMethodChoice = ({ currentChoice, setRunMethod }) => {
-  console.log("currentChoice", currentChoice);
+const RunMethodChoice = ({ currentChoice, setChoice }) => {
   return (
-    <div className="btn-group" role="group" aria-label="Replication choices">
-      <input
-        // html attributes
-        type="radio"
-        className="btn-check"
-        name="run_method"
-        id={RUN_METHOD__EUROFINS}
-        autoComplete="off"
-        // react attributes
-        checked={currentChoice === RUN_METHOD__EUROFINS}
-        onClick={() => setRunMethod(RUN_METHOD__EUROFINS)}
-      />
-      <label className="btn btn-outline-primary" htmlFor={RUN_METHOD__EUROFINS}>
-        Eurofins
-      </label>
-
-      <input
-        // html attributes
-        type="radio"
-        className="btn-check"
-        name="run_method"
-        id={RUN_METHOD__SALIVACLEAR}
-        autoComplete="off"
-        // react attributes
-        checked={currentChoice === RUN_METHOD__SALIVACLEAR}
-        onClick={() => setRunMethod(RUN_METHOD__SALIVACLEAR)}
-      />
-      <label
-        className="btn btn-outline-primary"
-        htmlFor={RUN_METHOD__SALIVACLEAR}
-      >
-        Saliva Direct
-      </label>
+    <div className="btn-group" role="group" aria-label="Run method choices">
+      {ACTIVE__RUN_METHOD__CHOICES.map((choice) => (
+        <RadioButton
+          key={choice}
+          name="runMethod"
+          value={choice}
+          displayValue={RUN_METHOD_DISPLAY_MAPPING[choice]}
+          checked={currentChoice === choice}
+          handleChange={setChoice}
+        />
+      ))}
     </div>
+  );
+};
+
+const RadioButton = ({ name, value, displayValue, checked, handleChange }) => {
+  const elId = `id_${value}`;
+  return (
+    <>
+      <input
+        // html attributes
+        type="radio"
+        className="btn-check"
+        name={name}
+        id={elId}
+        autoComplete="off"
+        // react attributes
+        checked={checked}
+        onClick={() => handleChange(value)}
+      />
+      <label className="btn btn-outline-primary" htmlFor={elId}>
+        {displayValue}
+      </label>
+    </>
   );
 };
