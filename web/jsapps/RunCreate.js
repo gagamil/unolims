@@ -6,38 +6,37 @@ import RunCreatePreview from "./components/RunCreate/RunCreatePreview";
 
 const RunCreate = () => {
   const [runData, setRunData] = useState(undefined);
-  useEffect(() => {
-    console.log("runData ===> ", runData);
-  }, [runData]);
+
   const STEP__RUN_FORM = "STEP__RUN_FORM";
   const STEP__RUN_PREVIEW = "STEP__RUN_PREVIEW";
   const STEP__RUN_SAVE = "STEP__RUN_SAVE";
+
+  const BUTTON__FORM = {
+    caption: "Back to edit",
+    step: STEP__RUN_FORM,
+    secondary: true,
+  };
+  const BUTTON__PREVIEW = {
+    caption: "Preview",
+    step: STEP__RUN_PREVIEW,
+    secondary: false,
+  };
+  const BUTTON__UPLOAD = {
+    caption: "Create run",
+    step: STEP__RUN_SAVE,
+    secondary: false,
+  };
+
+  const buttons = {
+    STEP__RUN_FORM: [null, BUTTON__PREVIEW],
+    STEP__RUN_PREVIEW: [BUTTON__FORM, BUTTON__UPLOAD],
+  };
+
   const [step, setStep] = useState(STEP__RUN_FORM);
 
   return (
     <>
-      <div className="row justify-content-between">
-        <div className="col-md-4">
-          <button
-            onClick={() => {
-              setStep(STEP__RUN_FORM);
-            }}
-            className="btn btn-primary"
-          >
-            Back
-          </button>
-        </div>
-        <div className="col-md-4">
-          <button
-            onClick={() => {
-              setStep(STEP__RUN_PREVIEW);
-            }}
-            className="btn btn-primary"
-          >
-            Preview & Confirm
-          </button>
-        </div>
-      </div>
+      <ButtonWizard buttonPair={buttons[step]} handleClick={setStep} />
 
       {step === STEP__RUN_PREVIEW && (
         <RunCreatePreview
@@ -53,3 +52,31 @@ const RunCreate = () => {
 };
 
 export default RunCreate;
+
+const ButtonWizard = ({ buttonPair, handleClick }) => {
+  return (
+    <div className="row justify-content-between mt-2 mb-2">
+      {buttonPair.map((btn) => {
+        if (!btn) {
+          return <div className="col-md-4"></div>;
+        } else {
+          return (
+            <div className="col-md-4">
+              <button
+                onClick={() => {
+                  console.log("Will set step: ", btn.step);
+                  handleClick(btn.step);
+                }}
+                className={
+                  btn.secondary ? "btn btn-outline-primary" : "btn btn-primary"
+                }
+              >
+                {btn.caption}
+              </button>
+            </div>
+          );
+        }
+      })}
+    </div>
+  );
+};
