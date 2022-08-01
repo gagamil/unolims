@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 import RunCreateForm from "./components/RunCreate/RunCreateForm";
 import RunCreatePreview from "./components/RunCreate/RunCreatePreview";
 
+const STEP__NO_STEP = "STEP__NO_STEP";
+
 const RunCreate = () => {
   const [runData, setRunData] = useState(undefined);
 
@@ -11,6 +13,11 @@ const RunCreate = () => {
   const STEP__RUN_PREVIEW = "STEP__RUN_PREVIEW";
   const STEP__RUN_SAVE = "STEP__RUN_SAVE";
 
+  const BUTTON__NULL = {
+    caption: "",
+    step: STEP__NO_STEP,
+    secondary: true,
+  };
   const BUTTON__FORM = {
     caption: "Back to edit",
     step: STEP__RUN_FORM,
@@ -28,7 +35,7 @@ const RunCreate = () => {
   };
 
   const buttons = {
-    STEP__RUN_FORM: [null, BUTTON__PREVIEW],
+    STEP__RUN_FORM: [BUTTON__NULL, BUTTON__PREVIEW],
     STEP__RUN_PREVIEW: [BUTTON__FORM, BUTTON__UPLOAD],
   };
 
@@ -57,11 +64,11 @@ const ButtonWizard = ({ buttonPair, handleClick }) => {
   return (
     <div className="row justify-content-between mt-2 mb-2">
       {buttonPair.map((btn) => {
-        if (!btn) {
-          return <div className="col-md-4"></div>;
+        if (btn.step === STEP__NO_STEP) {
+          return <div className="col-md-4" key={btn.step}></div>;
         } else {
           return (
-            <div className="col-md-4">
+            <div className="col-md-4" key={btn.step}>
               <button
                 onClick={() => {
                   console.log("Will set step: ", btn.step);
