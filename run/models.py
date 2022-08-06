@@ -15,9 +15,15 @@ class Run(models.Model):
     tube_batches = models.ManyToManyField(TubeBatch)
 
     run_characteristics = models.JSONField()
+
+class RunConfiguration(models.Model):
+    run = models.OneToOneField(Run, on_delete=models.PROTECT)
     well_template = models.JSONField()
     run_file = models.FileField()
 
+# class RunResultFile(models.Model):
+#     run = models.ForeignKey(Run)
+#     results_file = models.FileField()
 
 class RunResult(models.Model):
     '''
