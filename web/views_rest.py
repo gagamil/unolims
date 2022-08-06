@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from tubes.models import TubeBatch, TubeBatchPosition
 
+### TUBES
 class TubeBatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = TubeBatch
@@ -37,3 +38,16 @@ class TubeBatchListAPIView(generics.ListAPIView):
         return tube_batch_list
 
     serializer_class = TubeBatchListReadSerializer
+
+### RUNS
+
+from run.models import Run
+class RunCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Run
+        fields = ('title', 'tube_batches', 'run_characteristics')
+
+class CreateRunAPIView(generics.CreateAPIView):
+    serializer_class = RunCreateSerializer
+
+
