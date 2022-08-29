@@ -1,7 +1,10 @@
 # unolims
 
 Basic Laboratory Information Management System web app for sample testing using two-stage hierarchical pool testing techinque.
-Built with Django, uses tags and signals for main logic operation.
+Built with Django, signals for main logic operation.
+This app is developped as a monolithic app.
+However the Signals framework does offer a possibility to develop a loosely coupled Django project.
+This way decoupling one of the apps should be a fairly easy job.
 
 # licence
 
@@ -9,18 +12,47 @@ MIT
 
 # motivation
 
-LIMS might be expensive to build. Since there is information out that not so rich regions and countries struggle to test their population due to finance reasons easing some part of the process might be beneficial to them.
+LIMS might be expensive to build.
+My experience shows that multiple design flaws and over engineerig can geopardize the LIMS adoption and basically screw the whole workflow.
+The basics of hierarchical pooling is more or less the same and differs in the details.
+These detail can be added later on.
 Provided that this software would be relatively easy to deploy and modify this LIMS would be a good tool for the labs.
 
 # Two stage hierarchical pool testing
 
 1. All samples are placed in their respective tubes.
-2. These samples are then amalgamated into a number of pools.
-3. Pools are being tested.
+2. These samples are then amalgamated into a number of pools using pooling tubes.
+3. Pooling tubes are then being tested.
 4. If pool tested negative, the respective individual samples are flagged negative.
 5. If pool tested positive, the respective individual samples are being tested individually.
 
 # App design
+
+Structural separation by apps.
+
+## common
+
+Constants, signals and other names and objects used throughout the apps.
+
+## data_importing
+
+Data import services and logic.
+For Tubes and Runs.
+
+## run
+
+All Run, Run Template, Run Results data models and logic.
+
+## tubes
+
+All Tube and Batch data models and logic.
+
+## web
+
+The web app UI. A hybrid Django with templates configuration.
+The ecnhanced UX is built using React Js.
+Whenever possible basic Template based Django Views are used.
+The React Js app is being used when UX improvement is evident.
 
 ## Tubes and Batches
 
