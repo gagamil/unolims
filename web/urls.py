@@ -2,7 +2,7 @@ from django.urls import path, include
 
 from .views import TubeBatchListView, TubeBatchDetailView, TubeBatchFileImportCreateView
 from .views_rest import UpdateTubeBatchAPIView, TubeBatchListAPIView, CreateRunAPIView
-from .views import CreateRunView
+from .views import CreateRunTemplateView
 
 
 urlpatterns = [
@@ -19,5 +19,5 @@ urlpatterns = [
 
     path('import/tubebatch/', TubeBatchFileImportCreateView.as_view(), name='tubebatch-fileimport-create-page'),
 
-    path('run/create/', CreateRunView.as_view(), name='run-create-page')
+    path('run/create/', CreateRunTemplateView.as_view(), name='run-create-page')
 ]

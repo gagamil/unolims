@@ -80,5 +80,5 @@ class TubeBatchFileImportCreateView(LoginRequiredMixin, CreateView):
         return redirect_url
 
 
-class CreateRunView(LoginRequiredMixin, TemplateView):
+class CreateRunTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'run/create_run.html'
