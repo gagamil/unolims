@@ -1,20 +1,17 @@
 from django.db import models
-# from django.contrib.postgres.fields import ArrayField
 
-from tubes.models import TubeBatch
+from common.data import Tube, RunData
 
 
 class Run(models.Model):
     '''
-    - barcodes: If tube_batches selected then auto populate
-    - tube_batches: may be set to auto populate barcodes field and generate the RUN file
+    - barcodes: List of common.data.Tube dataclass objects
+    # - run_xtra_data: denormalized data related to the TubeBatch
     '''
     title = models.CharField(blank=True, max_length=100)
-    # barcodes = ArrayField(blank=True)
-
-    tube_batches = models.ManyToManyField(TubeBatch)
-
+    barcodes = models.JSONField()
     run_characteristics = models.JSONField()
+    run_xtra_data = models.JSONField()
 
 class RunConfiguration(models.Model):
     run = models.OneToOneField(Run, on_delete=models.PROTECT)
