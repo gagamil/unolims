@@ -3,6 +3,7 @@ from django.db import models
 
 from .services import parse_batch_data_from_file, get_tube_batch_from_tube_data
 from common.const import TAG_POOLING_BATCH, TAG_RUN_BATCH, POOLING_BATCH, RUN_BATCH
+from tubes.models import TubeBatch
 
 class FileImportTubeBatch(models.Model):
     '''
@@ -34,3 +35,11 @@ class FileImportTubeBatch(models.Model):
         tube_batch = get_tube_batch_from_tube_data(tube_data=tube_data, batch_type=self.batch_type)
         self.batch_data = {'tube_data': tube_batch.to_json()}
 
+
+class APIImportRun(models.Model):
+    '''
+    This is a DTO
+    '''
+    title = models.CharField(blank=True, max_length=100)
+    tube_batches = models.ManyToManyField(TubeBatch)
+    run_characteristics = models.JSONField()
