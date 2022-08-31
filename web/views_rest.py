@@ -2,6 +2,9 @@ from rest_framework import generics, views, response
 from rest_framework import serializers
 
 from tubes.models import TubeBatch, TubeBatchPosition
+from common.signals import sig_send__run_data_import_done
+from common.data import Tube, RunData
+
 
 ### TUBES
 class TubeBatchSerializer(serializers.ModelSerializer):
@@ -41,13 +44,29 @@ class TubeBatchListAPIView(generics.ListAPIView):
 
 ### RUNS
 
-from run.models import Run
+from data_importing.models import APIImportRun
 class RunCreateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Run
+        model = APIImportRun
         fields = ('title', 'tube_batches', 'run_characteristics')
 
 class CreateRunAPIView(generics.CreateAPIView):
     serializer_class = RunCreateSerializer
+
+    def perform_create(self, serializer):
+        imported_run = serializer.save()
+
+        all_tubes = []
+        for tube_batch in imported_run.tube_batches.all():
+            all_tubes.extend(tube_batch.tubes.all())
+
+        tube_data_list = []
+        for tube in all_tubes:
+            t = Tube.from_json(tube)
+            tube_data_list.append(t)
+    
+        run_data = RunData(id=imported_run.pk, title=imported_run.title, tubes=tube_data_list, run_characteristics=imported_run.run_characteristics)
+        import_id = imported_run.pk
+        sig_send__run_data_import_done(sender=CreateRunAPIView.__class__.__name__, sender_pk=import_id, run_data=run_data)
 
 

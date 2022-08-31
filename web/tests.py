@@ -6,6 +6,8 @@ from rest_framework.test import APITestCase
 from dataclasses import dataclass, asdict, field
 
 from tubes.models import TubeBatch
+from run.models import Run
+
 
 @dataclass
 class RunDTO:
@@ -40,5 +42,7 @@ class RunCreateAPITestCase(APITestCase):
 
         run = RunDTO(title='Test run 1', tube_batches=[run_batch_1.pk, run_batch_2.pk])
         response = self.client.post(url, data=asdict(run), format='json')
-        print(response.data)
+        # print(response.data)
         self.assertEqual(201, response.status_code)
+
+        self.assertTrue(Run.objects.exists())

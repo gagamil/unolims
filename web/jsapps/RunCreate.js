@@ -37,14 +37,22 @@ const RunCreate = () => {
   const buttons = {
     STEP__RUN_FORM: [BUTTON__NULL, BUTTON__PREVIEW],
     STEP__RUN_PREVIEW: [BUTTON__FORM, BUTTON__UPLOAD],
+    STEP__RUN_SAVE: [],
   };
 
   const [step, setStep] = useState(STEP__RUN_FORM);
+
+  useEffect(() => {
+    if (step === STEP__RUN_SAVE) {
+      console.log("Will save this run...");
+    }
+  }, [step]);
 
   return (
     <>
       <ButtonWizard buttonPair={buttons[step]} handleClick={setStep} />
 
+      {step === STEP__RUN_SAVE && <p>Saving run</p>}
       {step === STEP__RUN_PREVIEW && (
         <RunCreatePreview
           runTitle={runData.runTitle}
