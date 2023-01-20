@@ -1,11 +1,12 @@
 from django.db import models
 from taggit.managers import TaggableManager
+from model_utils.models import TimeStampedModel, SoftDeletableModel, UUIDModel
 
 
 # Create your models here.
-class Tube(models.Model):
+class Tube(TimeStampedModel, SoftDeletableModel, UUIDModel):
     '''
-    tube_id - tube barcode
+    tube_id - tube barcode TODO: change "tube_id" to "barcode"
     '''
     tube_id = models.CharField(max_length=30)
 
