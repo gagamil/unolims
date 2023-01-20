@@ -15,7 +15,7 @@ def fill_batch(batch):
             position = '%s%d' % (ROWS[idx_row], idx_col+1)
             TubeBatchPosition.objects.create(tube=tube, batch= batch, position=position)
 
-def fill_batch_B(batch, tube_ids):
+def fill_batch_B(batch, barcodes):
     # set all possible positions in a rack
     positions = []
     for idx_row, row in enumerate(PLATE_B_POS):
@@ -24,15 +24,15 @@ def fill_batch_B(batch, tube_ids):
             positions.append(position)
     
     # validate number of tubes - just in case...
-    if len(tube_ids) > len(positions): # would be impossible to do - right?
+    if len(barcodes) > len(positions): # would be impossible to do - right?
         return
 
     # put tubes in positions
-    for idx, tube_id in enumerate(tube_ids):
+    for idx, barcode in enumerate(barcodes):
         position = positions[idx]
-        tube = Tube.objects.get(tube_id=tube_id)
+        tube = Tube.objects.get(barcode=barcode)
         TubeBatchPosition.objects.create(tube=tube, batch=batch, position=position)
-        # print(tube_id, ' ', position)
+        # print(barcode, ' ', position)
 
 # TAG_POOLING_SCAN = 'PoolingScan'
 TAG_RUN_SCAN = 'RunScan'

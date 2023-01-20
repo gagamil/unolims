@@ -29,12 +29,12 @@ class TubeBatchOneTestCase(TestCase):
         # find all pooling tubes
         pooling_batches = TubeBatch.objects.filter(tags__name__in=[TAG_POOLING_BATCH])
         print('POOLING BATCHES PK: ', list(pooling_batches.values_list('pk', flat=True)))
-        tube_ids = TubeBatchPosition.objects.filter(batch__in=pooling_batches).filter(position=POOLING_TUBE_POS).values_list('tube__tube_id', flat=True)
-        print('TUBE IDS: ', tube_ids)
-        self.assertEqual(LEN_COLS*4+6, len(tube_ids))
+        barcodes = TubeBatchPosition.objects.filter(batch__in=pooling_batches).filter(position=POOLING_TUBE_POS).values_list('tube__barcode', flat=True)
+        print('TUBE IDS: ', barcodes)
+        self.assertEqual(LEN_COLS*4+6, len(barcodes))
 
         # fill with all P tubes from type A BATCHes
-        fill_batch_B(run_batch, tube_ids)
+        fill_batch_B(run_batch, barcodes)
 
         tube_run_batch = TubeBatch.objects.get(tags__name__in=[TAG_RUN_BATCH])
         self.assertEqual(LEN_COLS*4+6, tube_run_batch.tubes.count())

@@ -14,7 +14,7 @@ def random_digits():
 
 @dataclass
 class Tube:
-    tube_id: str
+    barcode: str
     position: str
 
 
@@ -37,8 +37,8 @@ class Command(BaseCommand):
                     break
 
                 position = '%s%d' % (ROWS[idx_row], idx_col+1)
-                tube_id = f'INXX{random.randint(100000, 999999)}' if 'P' == PLATE_A_POS[idx_row][idx_col] else f'EXTXX{random.randint(100000, 999999)}'
-                tubes.append(Tube(tube_id=tube_id, position=position))
+                barcode = f'INXX{random.randint(100000, 999999)}' if 'P' == PLATE_A_POS[idx_row][idx_col] else f'EXTXX{random.randint(100000, 999999)}'
+                tubes.append(Tube(barcode=barcode, position=position))
             if get_out:
                 break
         
@@ -46,7 +46,7 @@ class Command(BaseCommand):
             if t.position == POOLING_TUBE_POS:
                 break
         else:
-            tubes.append(Tube(tube_id=tube_id, position=POOLING_TUBE_POS))
+            tubes.append(Tube(barcode=barcode, position=POOLING_TUBE_POS))
 
         rack_id = f'RACK{random_digits()}'
         from datetime import datetime
@@ -62,6 +62,6 @@ class Command(BaseCommand):
 
             writer.writeheader()
             for tube in tubes:
-                writer.writerow({'Date':date, 'Time':time, 'Rack barcode':rack_id, 'Position': tube.position, 'Tube barcode': tube.tube_id})
+                writer.writerow({'Date':date, 'Time':time, 'Rack barcode':rack_id, 'Position': tube.position, 'Tube barcode': tube.barcode})
 
         self.stdout.write(self.style.SUCCESS('Count "%d"' % len(tubes)))

@@ -5,13 +5,10 @@ from model_utils.models import TimeStampedModel, SoftDeletableModel, UUIDModel
 
 # Create your models here.
 class Tube(TimeStampedModel, SoftDeletableModel, UUIDModel):
-    '''
-    tube_id - tube barcode TODO: change "tube_id" to "barcode"
-    '''
-    tube_id = models.CharField(max_length=30)
+    barcode = models.CharField(max_length=30)
 
     def __str__(self) -> str:
-        return f'{self.tube_id}'
+        return f'{self.barcode}'
 
 
 class TubeBatch(models.Model):

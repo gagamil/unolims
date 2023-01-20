@@ -17,7 +17,7 @@ from run.models import Run
 # class TubeBatchFilter(django_filters.FilterSet):
 #     class Meta:
 #         model = TubeBatch
-#         fields = ['title', 'tubes__tube_id']
+#         fields = ['title', 'tubes__barcode']
 
 class TubeBatchFilter(django_filters.FilterSet):
     q = django_filters.CharFilter(method='tubebatch_filter',label="Search")
@@ -28,7 +28,7 @@ class TubeBatchFilter(django_filters.FilterSet):
 
     def tubebatch_filter(self, queryset, name, value):
         return TubeBatch.objects.filter(
-            Q(title__icontains=value) | Q(xtra_data__icontains=value) |Q(tubes__tube_id__icontains=value)
+            Q(title__icontains=value) | Q(xtra_data__icontains=value) |Q(tubes__barcode__icontains=value)
         )
 
 

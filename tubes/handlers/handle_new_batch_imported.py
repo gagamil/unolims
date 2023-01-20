@@ -24,5 +24,5 @@ def new_batch_imported(sender, **kwargs):
         batch.tags.add(TAG_RUN_BATCH)
 
     for t in tube_batch_data.tubes:
-        tube = Tube.objects.create(tube_id=t.barcode)
+        tube = Tube.objects.create(barcode=t.barcode)
         TubeBatchPosition.objects.create(tube=tube, batch=batch, position=t.position)

@@ -1,15 +1,10 @@
-{% extends "../base.html" %} 
-{% load static %}
-
-{% block BLK_MAIN %}
-{% csrf_token %}
+{% extends "../base.html" %} {% load static %} {% block BLK_MAIN %} {%
+csrf_token %}
 <script>
-const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 </script>
 {{ js_data|json_script:'object_data' }}
-<h1>
-  Tube batch
-</h1>
+<h1>Tube batch</h1>
 <h3>{{ object.xtra_data.rack_id }}</h3>
 <div id="tubes__title_update"></div>
 <div class="row">
@@ -31,11 +26,12 @@ const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     {% for tube in object.tubebatchposition_set.all %}
     <tr>
       <td>{{ tube.tube.id }}</td>
-      <td>{{ tube.tube.tube_id }}</td>
+      <td>{{ tube.tube.barcode }}</td>
       <td>{{ tube.position }}</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
+{% endblock %} {% block JS_INCLUDE %}
+<script src="{% static 'js/index-bundle.js' %}"></script>
 {% endblock %}
-{% block JS_INCLUDE %}<script src="{% static 'js/index-bundle.js' %}"></script>{% endblock %}
